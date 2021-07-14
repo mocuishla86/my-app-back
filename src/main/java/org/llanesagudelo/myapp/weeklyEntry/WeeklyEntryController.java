@@ -1,7 +1,5 @@
-package org.llanesagudelo.myapp.Controller;
+package org.llanesagudelo.myapp.weeklyEntry;
 
-import org.llanesagudelo.myapp.WeeklyEntry;
-import org.llanesagudelo.myapp.WeeklyEntryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,10 +10,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/entries")
-public class MainController {
+public class WeeklyEntryController {
     private WeeklyEntryService weeklyEntryService;
 
-    public MainController(WeeklyEntryService weeklyEntryService){
+    public WeeklyEntryController(WeeklyEntryService weeklyEntryService){
         this.weeklyEntryService = weeklyEntryService;
     }
     @GetMapping()

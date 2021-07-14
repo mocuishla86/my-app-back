@@ -1,4 +1,4 @@
-package org.llanesagudelo.myapp;
+package org.llanesagudelo.myapp.weeklyEntry;
 
 public class WeeklyEntry {
 

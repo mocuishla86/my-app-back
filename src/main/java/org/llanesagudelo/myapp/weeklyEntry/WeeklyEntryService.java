@@ -1,6 +1,6 @@
-package org.llanesagudelo.myapp;
+package org.llanesagudelo.myapp.weeklyEntry;
 
-import org.springframework.stereotype.Component;
+import org.llanesagudelo.myapp.weeklyEntry.WeeklyEntry;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
