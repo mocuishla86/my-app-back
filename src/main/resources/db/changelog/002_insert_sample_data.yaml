@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert_sample_data
+      author: isabel
+      changes:
+        - insert:
+            tableName: weekly_entry
+            columns:
+            - column:
+                name: id
+                value: "e7643aba-fd9a-4005-b531-c8c7f37228f5"
+            - column:
+                name: title
+                value: "My First Month"
+            - column:
+                name: content
+                value: "Bla, bla, bla, ...bla!"
