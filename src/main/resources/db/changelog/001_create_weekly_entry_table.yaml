@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_weekly_entry_table
+      author: isabel
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    - primaryKey: true
+                    - nullable: false
+              - column:
+                  name: title
+                  type: varchar(255)
+              - column:
+                  name: content
+                  type: varchar(4096)
+            schemaName: public
+            tableName: weekly_entry
