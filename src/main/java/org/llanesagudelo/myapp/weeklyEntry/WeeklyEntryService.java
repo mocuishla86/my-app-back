@@ -8,8 +8,15 @@ import java.util.List;
 @Service
 public class WeeklyEntryService {
 
+    WeeklyEntryRepository weeklyEntryRepository;
+
+    public WeeklyEntryService(WeeklyEntryRepository weeklyEntryRepository) {
+        this.weeklyEntryRepository = weeklyEntryRepository;
+    }
+
     public List<WeeklyEntry> getWeeklyEntries(){
-        return List.of(new WeeklyEntry("My First Month", "...bla,bla"));
+
+        return weeklyEntryRepository.findAll();
     }
 
     public void save(WeeklyEntry weeklyEntry) {
