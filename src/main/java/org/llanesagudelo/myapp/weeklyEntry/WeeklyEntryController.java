@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -24,7 +25,12 @@ public class WeeklyEntryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WeeklyEntry> getWeeklyEntryById(@PathVariable UUID id){
-        return ResponseEntity.ok(weeklyEntryService.getWeeklyEntryById(id));
+    public ResponseEntity<Optional<WeeklyEntry>> getWeeklyEntryById(@PathVariable UUID id){
+        Optional<WeeklyEntry> weeklyEntry = weeklyEntryService.getWeeklyEntryById(id);
+
+        if(weeklyEntry.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(weeklyEntry);
     }
 }

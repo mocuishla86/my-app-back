@@ -4,6 +4,7 @@ import org.llanesagudelo.myapp.weeklyEntry.WeeklyEntry;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -20,8 +21,8 @@ public class WeeklyEntryService {
         return weeklyEntryRepository.findAll();
     }
 
-    public WeeklyEntry getWeeklyEntryById(UUID id){
-        return weeklyEntryRepository.findById(id).get();
+    public Optional<WeeklyEntry> getWeeklyEntryById(UUID id){
+        return weeklyEntryRepository.findById(id);
     }
 
     public void save(WeeklyEntry weeklyEntry) {
