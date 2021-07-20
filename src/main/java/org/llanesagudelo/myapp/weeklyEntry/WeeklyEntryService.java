@@ -26,5 +26,7 @@ public class WeeklyEntryService {
     }
 
     public void save(WeeklyEntry weeklyEntry) {
+        weeklyEntry.setId(UUID.randomUUID());
+        weeklyEntryRepository.save(weeklyEntry);
     }
 }
