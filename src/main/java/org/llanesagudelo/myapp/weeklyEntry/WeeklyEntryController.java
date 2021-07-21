@@ -50,4 +50,15 @@ public class WeeklyEntryController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteWeeklyEntry(@PathVariable UUID id){
+        try{
+            weeklyEntryService.delete(id);
+            return ResponseEntity.noContent().build();
+        } catch (NoSuchElementException exception){
+            return ResponseEntity.notFound().build();
+        }
+
+    }
 }

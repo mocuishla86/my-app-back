@@ -38,4 +38,11 @@ public class WeeklyEntryService {
         weeklyEntryRepository.save(weeklyEntry);
     }
 
+
+    public void delete(UUID id) {
+        if(!weeklyEntryRepository.existsById(id)){
+            throw new NoSuchElementException();
+        }
+        weeklyEntryRepository.deleteById(id);
+    }
 }
