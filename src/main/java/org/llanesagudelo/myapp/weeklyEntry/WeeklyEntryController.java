@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,9 +39,14 @@ public class WeeklyEntryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(weeklyEntry);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping ("/{id}")
     public ResponseEntity<Void> updateWeeklyEntry(@PathVariable UUID id, @RequestBody WeeklyEntry weeklyEntry){
-        weeklyEntryService.updateWeeklyEntry(id, weeklyEntry.getTitle(), weeklyEntry.getContent());
-        return ResponseEntity.noContent().build();
+        weeklyEntry.setId(id);
+        try{
+            weeklyEntryService.update(weeklyEntry);
+            return ResponseEntity.noContent().build();
+        }catch (NoSuchElementException exception){
+            return ResponseEntity.notFound().build();
+        }
     }
 }

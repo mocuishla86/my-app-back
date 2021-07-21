@@ -4,6 +4,7 @@ import org.llanesagudelo.myapp.weeklyEntry.WeeklyEntry;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,12 +31,11 @@ public class WeeklyEntryService {
         weeklyEntryRepository.save(weeklyEntry);
     }
 
-    public void updateWeeklyEntry(UUID id, String title, String content){
-        WeeklyEntry weeklyEntry = weeklyEntryRepository.getById(id);
-
-        weeklyEntry.setContent(content);
-        weeklyEntry.setTitle(title);
-
+    public void update(WeeklyEntry weeklyEntry) {
+        if(!weeklyEntryRepository.existsById(weeklyEntry.getId())) {
+            throw new NoSuchElementException();
+        }
         weeklyEntryRepository.save(weeklyEntry);
     }
+
 }
