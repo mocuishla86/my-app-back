@@ -15,37 +15,38 @@ import java.util.UUID;
 public class WeeklyEntryController {
     private WeeklyEntryService weeklyEntryService;
 
-    public WeeklyEntryController(WeeklyEntryService weeklyEntryService){
+    public WeeklyEntryController(WeeklyEntryService weeklyEntryService) {
         this.weeklyEntryService = weeklyEntryService;
     }
+
     @GetMapping()
-    public ResponseEntity<List<WeeklyEntry>> getWeeklyEntries(){
+    public ResponseEntity<List<WeeklyEntry>> getWeeklyEntries() {
         return ResponseEntity.ok(weeklyEntryService.getWeeklyEntries());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<WeeklyEntry>> getWeeklyEntryById(@PathVariable UUID id){
+    public ResponseEntity<Optional<WeeklyEntry>> getWeeklyEntryById(@PathVariable UUID id) {
         Optional<WeeklyEntry> weeklyEntry = weeklyEntryService.getWeeklyEntryById(id);
 
-        if(weeklyEntry.isEmpty()){
+        if (weeklyEntry.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(weeklyEntry);
     }
 
     @PostMapping
-    public ResponseEntity<WeeklyEntry> createWeeklyEntry(@RequestBody WeeklyEntry weeklyEntry){
+    public ResponseEntity<WeeklyEntry> createWeeklyEntry(@RequestBody WeeklyEntry weeklyEntry) {
         weeklyEntryService.save(weeklyEntry);
         return ResponseEntity.status(HttpStatus.CREATED).body(weeklyEntry);
     }
 
-    @PutMapping ("/{id}")
-    public ResponseEntity<Void> updateWeeklyEntry(@PathVariable UUID id, @RequestBody WeeklyEntry weeklyEntry){
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateWeeklyEntry(@PathVariable UUID id, @RequestBody WeeklyEntry weeklyEntry) {
         weeklyEntry.setId(id);
-        try{
+        try {
             weeklyEntryService.update(weeklyEntry);
             return ResponseEntity.noContent().build();
-        }catch (NoSuchElementException exception){
+        } catch (NoSuchElementException exception) {
             return ResponseEntity.notFound().build();
         }
     }
