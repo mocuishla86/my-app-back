@@ -29,4 +29,13 @@ public class WeeklyEntryService {
         weeklyEntry.setId(UUID.randomUUID());
         weeklyEntryRepository.save(weeklyEntry);
     }
+
+    public void updateWeeklyEntry(UUID id, String title, String content){
+        WeeklyEntry weeklyEntry = weeklyEntryRepository.getById(id);
+
+        weeklyEntry.setContent(content);
+        weeklyEntry.setTitle(title);
+
+        weeklyEntryRepository.save(weeklyEntry);
+    }
 }

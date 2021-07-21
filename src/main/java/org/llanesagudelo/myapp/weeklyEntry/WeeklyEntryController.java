@@ -33,8 +33,14 @@ public class WeeklyEntryController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createWeeklyEntry(@RequestBody WeeklyEntry weeklyEntry){
+    public ResponseEntity<WeeklyEntry> createWeeklyEntry(@RequestBody WeeklyEntry weeklyEntry){
         weeklyEntryService.save(weeklyEntry);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(weeklyEntry);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateWeeklyEntry(@PathVariable UUID id, @RequestBody WeeklyEntry weeklyEntry){
+        weeklyEntryService.updateWeeklyEntry(id, weeklyEntry.getTitle(), weeklyEntry.getContent());
+        return ResponseEntity.noContent().build();
     }
 }
