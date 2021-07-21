@@ -1,0 +1,100 @@
+{
+	"info": {
+		"_postman_id": "f09ca5a9-dd50-4a5b-afac-58200d3bd464",
+		"name": "My-App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getAllWeeklyEntries",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/entries",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"entries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getWeeklyEntryById",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
+		},
+		{
+			"name": "saveNewWeeklyEntry",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"e7643aba-fd9a-4005-b531-c8c7f37228f6\",\n    \"title\": \"My Second Month\",\n    \"content\": \"Bla, bla, bla, ya son dos!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/entries",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"entries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateWeeklyEntry",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"My Fifth Month - Updated\",\n    \"content\": \"Bla, bla, bla, ya son cinco!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/entries/02bb0760-5503-48ca-9ad7-85f99563500c",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"entries",
+						"02bb0760-5503-48ca-9ad7-85f99563500c"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteWeeklyEntry",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": null
+			},
+			"response": []
+		}
+	]
+}
