@@ -1,6 +1,7 @@
 package org.llanesagudelo.myapp.weeklyEntry;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import liquibase.pro.packaged.W;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,28 @@ class WeeklyEntryControllerIT {
 
     }
 
+    @Test
+    public void aUserShouldBeAbleToUpdateAnEntry(){
+        WeeklyEntry weeklyEntry = new WeeklyEntry();
+        weeklyEntry.setTitle("Title 1");
+        weeklyEntry.setContent("Content 1");
+
+        ResponseEntity<WeeklyEntry> postResponse = createWeeklyEntry(weeklyEntry);
+
+        UUID weeklyEntryId = postResponse.getBody().getId();
+
+        weeklyEntry.setTitle("Title 1 updated");
+        weeklyEntry.setContent("Content 1 Updated");
+
+        ResponseEntity<WeeklyEntry> updatedWeeklyEntry = updateWeeklyEntry(weeklyEntryId, weeklyEntry);
+        assertThat(updatedWeeklyEntry.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        ResponseEntity<WeeklyEntry> weeklyEntryById = getWeeklyEntryById(weeklyEntryId);
+
+        assertThat(weeklyEntryById.getBody().getTitle()).isEqualTo("Title 1 updated");
+        assertThat(weeklyEntryById.getBody().getContent()).isEqualTo("Content 1 Updated");
+    }
+
     private ResponseEntity<WeeklyEntry> getWeeklyEntryById(UUID weeklyEntryId) {
         return restTemplate.exchange(
                     format("http://localhost:%d/entries/%s", port, weeklyEntryId),
@@ -93,6 +116,24 @@ class WeeklyEntryControllerIT {
         );
         return postResponse;
     }
+
+    private ResponseEntity<WeeklyEntry> updateWeeklyEntry(UUID weeklyEntryId, WeeklyEntry weeklyEntry){
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<WeeklyEntry> requestEntity = new HttpEntity<>(weeklyEntry, requestHeaders);
+        ResponseEntity<WeeklyEntry> updateResponse = restTemplate.exchange(
+                format("http://localhost:%d/entries/%s", port, weeklyEntryId),
+                HttpMethod.PUT,
+                requestEntity,
+                new ParameterizedTypeReference<WeeklyEntry>() {
+                }
+        );
+        return updateResponse;
+
+    }
+
+
 
     private ResponseEntity<List<WeeklyEntry>> getAllWeeklyEntries() {
         return restTemplate.exchange(
