@@ -12,6 +12,7 @@ import org.springframework.http.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Java6Assertions.assertThat;
@@ -36,12 +37,7 @@ class WeeklyEntryControllerIT {
 
     @Test
     public void atTheBeginningNoWeeklyEntriesShouldBePresent() {
-        ResponseEntity<List<WeeklyEntry>> weeklyEntries = restTemplate.exchange(
-                format("http://localhost:%d/entries", port),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<WeeklyEntry>>() {
-                });
+        ResponseEntity<List<WeeklyEntry>> weeklyEntries = getAllWeeklyEntries();
 
         assertThat(weeklyEntries.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(weeklyEntries.getBody()).hasSize(0);
@@ -53,6 +49,37 @@ class WeeklyEntryControllerIT {
         weeklyEntry.setTitle("Title 1");
         weeklyEntry.setContent("Content 1");
 
+        ResponseEntity<WeeklyEntry> postResponse = createWeeklyEntry(weeklyEntry);
+
+        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(postResponse.getBody().getTitle()).isEqualTo("Title 1");
+        assertThat(postResponse.getBody().getContent()).isEqualTo("Content 1");
+        UUID weeklyEntryId = postResponse.getBody().getId();
+        assertThat(weeklyEntryId).isNotNull();
+
+        ResponseEntity<List<WeeklyEntry>> weeklyEntries = getAllWeeklyEntries();
+
+        assertThat(weeklyEntries.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(weeklyEntries.getBody()).hasSize(1);
+
+        ResponseEntity<WeeklyEntry> weeklyEntryById = getWeeklyEntryById(weeklyEntryId);
+
+        assertThat(weeklyEntryById.getBody().getTitle()).isEqualTo("Title 1");
+        assertThat(weeklyEntryById.getBody().getContent()).isEqualTo("Content 1");
+        assertThat(weeklyEntryById.getBody().getId()).isEqualTo(weeklyEntryId);
+
+    }
+
+    private ResponseEntity<WeeklyEntry> getWeeklyEntryById(UUID weeklyEntryId) {
+        return restTemplate.exchange(
+                    format("http://localhost:%d/entries/%s", port, weeklyEntryId),
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<WeeklyEntry>() {
+                    });
+    }
+
+    private ResponseEntity<WeeklyEntry> createWeeklyEntry(WeeklyEntry weeklyEntry) {
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 
@@ -64,33 +91,16 @@ class WeeklyEntryControllerIT {
                 new ParameterizedTypeReference<WeeklyEntry>() {
                 }
         );
+        return postResponse;
+    }
 
-        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(postResponse.getBody().getTitle()).isEqualTo("Title 1");
-        assertThat(postResponse.getBody().getContent()).isEqualTo("Content 1");
-        assertThat(postResponse.getBody().getId()).isNotNull();
-
-        ResponseEntity<List<WeeklyEntry>> weeklyEntries = restTemplate.exchange(
+    private ResponseEntity<List<WeeklyEntry>> getAllWeeklyEntries() {
+        return restTemplate.exchange(
                 format("http://localhost:%d/entries", port),
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<WeeklyEntry>>() {
                 });
-
-        assertThat(weeklyEntries.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(weeklyEntries.getBody()).hasSize(1);
-
-        ResponseEntity<WeeklyEntry> weeklyEntryById = restTemplate.exchange(
-                format("http://localhost:%d/entries/%s", port, postResponse.getBody().getId()),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<WeeklyEntry>() {
-                });
-
-        assertThat(weeklyEntryById.getBody().getTitle()).isEqualTo("Title 1");
-        assertThat(weeklyEntryById.getBody().getContent()).isEqualTo("Content 1");
-        assertThat(weeklyEntryById.getBody().getId()).isEqualTo(postResponse.getBody().getId());
-
     }
 
 }
