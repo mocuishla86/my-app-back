@@ -8,11 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Java6Assertions.assertThat;
@@ -46,6 +45,52 @@ class WeeklyEntryControllerIT {
 
         assertThat(weeklyEntries.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(weeklyEntries.getBody()).hasSize(0);
+    }
+
+    @Test
+    public void aUserShouldBeAbleToAddAnEntry(){
+        WeeklyEntry weeklyEntry = new WeeklyEntry();
+        weeklyEntry.setTitle("Title 1");
+        weeklyEntry.setContent("Content 1");
+
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<WeeklyEntry> requestEntity = new HttpEntity<>(weeklyEntry, requestHeaders);
+        ResponseEntity<WeeklyEntry> postResponse = restTemplate.exchange(
+                format("http://localhost:%d/entries", port),
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<WeeklyEntry>() {
+                }
+        );
+
+        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(postResponse.getBody().getTitle()).isEqualTo("Title 1");
+        assertThat(postResponse.getBody().getContent()).isEqualTo("Content 1");
+        assertThat(postResponse.getBody().getId()).isNotNull();
+
+        ResponseEntity<List<WeeklyEntry>> weeklyEntries = restTemplate.exchange(
+                format("http://localhost:%d/entries", port),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<WeeklyEntry>>() {
+                });
+
+        assertThat(weeklyEntries.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(weeklyEntries.getBody()).hasSize(1);
+
+        ResponseEntity<WeeklyEntry> weeklyEntryById = restTemplate.exchange(
+                format("http://localhost:%d/entries/%s", port, postResponse.getBody().getId()),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<WeeklyEntry>() {
+                });
+
+        assertThat(weeklyEntryById.getBody().getTitle()).isEqualTo("Title 1");
+        assertThat(weeklyEntryById.getBody().getContent()).isEqualTo("Content 1");
+        assertThat(weeklyEntryById.getBody().getId()).isEqualTo(postResponse.getBody().getId());
+
     }
 
 }
