@@ -1,7 +1,5 @@
 package org.llanesagudelo.myapp.weeklyEntry;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import liquibase.pro.packaged.W;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +10,10 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class WeeklyEntryControllerIT {
@@ -45,7 +41,7 @@ class WeeklyEntryControllerIT {
     }
 
     @Test
-    public void aUserShouldBeAbleToAddAnEntry(){
+    public void aUserShouldBeAbleToAddAnEntry() {
         WeeklyEntry weeklyEntry = new WeeklyEntry();
         weeklyEntry.setTitle("Title 1");
         weeklyEntry.setContent("Content 1");
@@ -72,7 +68,7 @@ class WeeklyEntryControllerIT {
     }
 
     @Test
-    public void aUserShouldBeAbleToUpdateAnEntry(){
+    public void aUserShouldBeAbleToUpdateAnEntry() {
         WeeklyEntry weeklyEntry = new WeeklyEntry();
         weeklyEntry.setTitle("Title 1");
         weeklyEntry.setContent("Content 1");
@@ -93,13 +89,33 @@ class WeeklyEntryControllerIT {
         assertThat(weeklyEntryById.getBody().getContent()).isEqualTo("Content 1 Updated");
     }
 
+    @Test
+    public void aUserShouldBeAbleToDeleteAWeeklyEntry() {
+        WeeklyEntry weeklyEntry = new WeeklyEntry();
+        weeklyEntry.setTitle("Title 1");
+        weeklyEntry.setContent("Content 1");
+
+        ResponseEntity<WeeklyEntry> postResponse = createWeeklyEntry(weeklyEntry);
+
+        UUID weeklyEntryId = postResponse.getBody().getId();
+
+        ResponseEntity<Void> deleteResponse = deleteWeeklyEntry(weeklyEntryId);
+
+        assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        ResponseEntity<List<WeeklyEntry>> weeklyEntries = getAllWeeklyEntries();
+
+        assertThat(weeklyEntries.getBody()).hasSize(0);
+
+    }
+
     private ResponseEntity<WeeklyEntry> getWeeklyEntryById(UUID weeklyEntryId) {
         return restTemplate.exchange(
-                    format("http://localhost:%d/entries/%s", port, weeklyEntryId),
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<WeeklyEntry>() {
-                    });
+                format("http://localhost:%d/entries/%s", port, weeklyEntryId),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<WeeklyEntry>() {
+                });
     }
 
     private ResponseEntity<WeeklyEntry> createWeeklyEntry(WeeklyEntry weeklyEntry) {
@@ -117,7 +133,7 @@ class WeeklyEntryControllerIT {
         return postResponse;
     }
 
-    private ResponseEntity<WeeklyEntry> updateWeeklyEntry(UUID weeklyEntryId, WeeklyEntry weeklyEntry){
+    private ResponseEntity<WeeklyEntry> updateWeeklyEntry(UUID weeklyEntryId, WeeklyEntry weeklyEntry) {
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 
@@ -133,7 +149,12 @@ class WeeklyEntryControllerIT {
 
     }
 
-
+    private ResponseEntity<Void> deleteWeeklyEntry(UUID weeklyEntryId) {
+        return restTemplate.exchange(
+                format("http://localhost:%d/entries/%s", port, weeklyEntryId),
+                HttpMethod.DELETE,
+                null, Void.class);
+    }
 
     private ResponseEntity<List<WeeklyEntry>> getAllWeeklyEntries() {
         return restTemplate.exchange(
